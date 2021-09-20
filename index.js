@@ -1,14 +1,15 @@
 /**
  * Module Imports
  */
-const { Client, Collection } = require("discord.js");
+const { Client, Collection, Intents } = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
 const { TOKEN, PREFIX } = require("./util/Util");
 const i18n = require("./util/i18n");
 
 const client = new Client({
-  disableMentions: "everyone",
+  allowedMentions: { parse: ['users', 'roles'], repliedUser: true },
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
   restTimeOffset: 0
 });
 
@@ -30,6 +31,11 @@ client.on("warn", (info) => console.log(info));
 client.on("error", console.error);
 
 /**
+ * Attach Debugger For Testing Purposes
+ */
+client.on("debug", console.log);
+
+/**
  * Import all commands
  */
 const commandFiles = readdirSync(join(__dirname, "commands")).filter((file) => file.endsWith(".js"));
@@ -38,7 +44,7 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;
 

@@ -1,8 +1,16 @@
 const i18n = require("../util/i18n");
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const { Message } = require("discord.js");
 
 module.exports = {
   name: "clip",
   description: i18n.__("clip.description"),
+  /**
+   * 
+   * @param {Message} message 
+   * @param {Array.<string>} args 
+   * @returns 
+   */
   async execute(message, args) {
     const { channel } = message.member.voice;
     const queue = message.client.queue.get(message.guild.id);
@@ -25,18 +33,31 @@ module.exports = {
     message.client.queue.set(message.guild.id, queueConstruct);
 
     try {
-      queueConstruct.connection = await channel.join();
-      const dispatcher = queueConstruct.connection
-        .play(`./sounds/${args[0]}.mp3`)
-        .on("finish", () => {
-          message.client.queue.delete(message.guild.id);
-          channel.leave();
-        })
-        .on("error", (err) => {
-          message.client.queue.delete(message.guild.id);
-          channel.leave();
-          console.error(err);
-        });
+      queueConstruct.connection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+      });
+
+      const player = createAudioPlayer();
+
+      const resource = createAudioResource(`./sounds/${args[0]}.mp3`);
+
+      player.play(resource);
+
+      queueConstruct.connection.subscribe(player);
+
+      player.on(AudioPlayerStatus.Idle, () => {
+        message.client.queue.delete(message.guild.id);
+        /**
+         * Testing ^^
+         */
+        console.log("Finished");
+      }).on("error", (err) => {
+        message.client.queue.delete(message.guild.id);
+        queueConstruct.connection.destroy();
+        console.error(err);
+      });
     } catch (error) {
       console.error(error);
     }
