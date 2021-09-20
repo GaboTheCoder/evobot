@@ -52,7 +52,7 @@ module.exports = {
         /**
          * Testing ^^
          */
-        console.log("Finished");
+        console.log("Finished (Clip)");
       }).on("error", (err) => {
         message.client.queue.delete(message.guild.id);
         queueConstruct.connection.destroy();
