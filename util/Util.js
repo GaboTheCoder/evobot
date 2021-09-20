@@ -1,4 +1,11 @@
-exports.canModifyQueue = (member) => member.voice.channelID === member.guild.voice.channelID;
+const { GuildMember } = require("discord.js");
+
+/**
+ * 
+ * @param {GuildMember} member 
+ * @returns 
+ */
+exports.canModifyQueue = (member) => member.voice.channelId === member.guild.voiceStates.cache.get(member.id).channelId;
 
 let config;
 

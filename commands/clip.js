@@ -6,7 +6,6 @@ module.exports = {
   name: "clip",
   description: i18n.__("clip.description"),
   /**
-   * 
    * @param {Message} message 
    * @param {Array.<string>} args 
    * @returns 

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Message } = require("discord.js");
 const lyricsFinder = require("lyrics-finder");
 const i18n = require("../util/i18n");
 
@@ -6,6 +6,11 @@ module.exports = {
   name: "lyrics",
   aliases: ["ly"],
   description: i18n.__("lyrics.description"),
+  /**
+   * 
+   * @param {Message} message 
+   * @returns 
+   */
   async execute(message) {
     const queue = message.client.queue.get(message.guild.id);
     if (!queue) return message.channel.send(i18n.__("lyrics.errorNotQueue")).catch(console.error);
@@ -27,6 +32,6 @@ module.exports = {
 
     if (lyricsEmbed.description.length >= 2048)
       lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2045)}...`;
-    return message.channel.send(lyricsEmbed).catch(console.error);
+    return message.channel.send({ embeds: [lyricsEmbed] }).catch(console.error);
   }
 };

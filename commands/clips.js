@@ -1,9 +1,13 @@
 const i18n = require("../util/i18n");
 const fs = require("fs");
+const { Message } = require("discord.js");
 
 module.exports = {
   name: "clips",
   description: i18n.__("clips.description"),
+  /**
+   * @param {Message} message  
+   */
   execute(message) {
     fs.readdir("./sounds", function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);

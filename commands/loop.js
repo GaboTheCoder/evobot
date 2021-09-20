@@ -1,10 +1,16 @@
 const { canModifyQueue } = require("../util/Util");
+const { Message } = require("discord.js");
 const i18n = require("../util/i18n");
 
 module.exports = {
   name: "loop",
   aliases: ["l"],
   description: i18n.__("loop.description"),
+  /**
+   * 
+   * @param {Message} message 
+   * @returns 
+   */
   execute(message) {
     const queue = message.client.queue.get(message.guild.id);
     if (!queue) return message.reply(i18n.__("loop.errorNotQueue")).catch(console.error);
